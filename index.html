@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/?query=hotnews">NewsDaily</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/?query=hotnews">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/?query=weather">Weather</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/?query=sports">Sports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/?query=tech">Tech Updates</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/?query=global">Global</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/?query=horoscope">Horoscope</a>
+                    </li>
+                    
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" name="query" type="search" placeholder="Search" aria-label="Search">
+                    <input class="form-control me-2" name="pageNo" type="hidden" value="1" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="container row mx-auto">
+        <div id="content" class="row"></div>
+    <div class="prevNext my-4 d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li class="page-item"><a id="pre" class="page-link" href="#">Previous</a></li>
+              <li class="page-item"><a id= "next" class="page-link" href="#">Next</a></li>
+            </ul>
+          </nav>
+    </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      let queryParams = Object.fromEntries(urlSearchParams.entries());
+      let key = "292d3d22e7874f19bce7f517c74e2221"
+      let query = queryParams.query || 'hotnews';
+      let page = parseInt(queryParams.pageNo) || 1;
+      let articlesPerPage = 9;
+      let totalPages;
+  
+      const fetchNews = async (query, page) => {
+          let r = await fetch(`https://newsapi.org/v2/everything?q=${query}&apiKey=${key}&pageSize=${articlesPerPage}&page=${page}`);
+          let a = await r.json();
+          totalPages = Math.ceil(a.totalResults / articlesPerPage);
+  
+          // Update pagination links
+          document.getElementById("pre").href = `/?query=${query}&pageNo=${page - 1}`;
+          document.getElementById("next").href = `/?query=${query}&pageNo=${page + 1}`;
+  
+          let str = "";
+          for (let item of a.articles) {
+              str += `<div class="card m-4" style="width: 18rem;">
+                  <img src="${item.urlToImage}" class="card-img-top" alt="...">
+                  <div class="card-body m-2">
+                      <h5 class="card-title">${item.title}</h5>
+                      <p class="card-text">${item.description}</p>
+                      <a target="_blank" href="${item.url}" class="btn btn-primary">Read More...</a>
+                  </div>
+              </div>`;
+          }
+          document.getElementById('content').innerHTML = str;
+      }
+  
+      // Click event for "Next" button
+      document.getElementById("next").addEventListener("click", function (event) {
+          event.preventDefault();
+          if (page < totalPages) {
+              page++;
+              fetchNews(query, page);
+          }
+      });
+  
+      // Click event for "Previous" button
+      document.getElementById("pre").addEventListener("click", function (event) {
+          event.preventDefault();
+          if (page > 1) {
+              page--;
+              fetchNews(query, page);
+          }
+      });
+  
+      // Initial fetch
+      fetchNews(query, page);
+  </script>
+  
+</body>
+
+</html>
