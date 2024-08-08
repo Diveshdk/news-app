@@ -13,10 +13,6 @@ Welcome to NewsDaily, a simple news aggregator website that displays the latest 
 - **Pagination**: Navigate through multiple pages of news articles.
 - **Categories**: View news in categories like Weather, Sports, Tech Updates, Global, and Horoscope.
 
-## Live Demo
-
-You can view a live demo of the project [here](#) (replace with actual link if available).
-
 ## Getting Started
 
 To set up and run this project locally, follow these instructions:
